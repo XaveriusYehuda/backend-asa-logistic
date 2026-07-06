@@ -49,11 +49,15 @@ router.post("/signup", async (req, res) => {
     });
 
   } catch (error) {
+    
+    console.error("========== SERVER ERROR ==========");
     console.error(error);
+    console.error(error.stack);
 
     res.status(500).json({
-      message: "Server error",
+        message: error.message,
     });
+
   }
 });
 
