@@ -7,6 +7,20 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- asalogistics.users definition
+
+CREATE TABLE `users` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `public_id` char(26) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `public_id` (`public_id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE rfq_requests (
     id INT PRIMARY KEY AUTO_INCREMENT,
     rfq_number VARCHAR(50) UNIQUE NOT NULL,
@@ -35,6 +49,24 @@ WHERE user_id IS NULL;
 
 ALTER TABLE rfq_requests 
 MODIFY COLUMN user_id VARCHAR(100) NOT NULL;
+
+
+// doksli
+
+-- asalogistics.rfq_requests definition
+
+CREATE TABLE `rfq_requests` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rfq_number` varchar(50) NOT NULL,
+  `user_id` varchar(100) NOT NULL,
+  `service_type` varchar(100) NOT NULL,
+  `service_details` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`service_details`)),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status_request` enum('incoming','ongoing','completed') NOT NULL DEFAULT 'incoming',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `rfq_number` (`rfq_number`)
+) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 CREATE TABLE rfq_attachments (
