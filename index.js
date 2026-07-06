@@ -3,7 +3,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const path = require("path");
 const multer = require("multer");
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const authRoutes = require("./routes/auth");
 const rfqRoutes = require("./routes/rfq");
