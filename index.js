@@ -19,11 +19,12 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(
-  cors({
-    // origin: "http://localhost:5173",
-    origin: "https://asalogistic.co.id",
-    credentials: true,
-  })
+  // cors({
+  //   // origin: "http://localhost:5173",
+  //   origin: 'https://asalogistic.co.id',
+  //   credentials: true,
+  // })
+  cors()
 );
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
