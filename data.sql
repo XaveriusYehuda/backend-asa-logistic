@@ -84,6 +84,20 @@ CREATE TABLE rfq_attachments (
     FOREIGN KEY (rfq_id) REFERENCES rfq_requests(id) ON DELETE CASCADE
 );
 
+-- asalogistics.rfq_attachments definition
+
+CREATE TABLE `rfq_attachments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rfq_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `document_type` varchar(100) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `rfq_id` (`rfq_id`),
+  CONSTRAINT `rfq_attachments_ibfk_1` FOREIGN KEY (`rfq_id`) REFERENCES `rfq_requests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=141 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE rfq_final_quotations (
     id INT PRIMARY KEY AUTO_INCREMENT,
     rfq_id INT NOT NULL UNIQUE, -- 1 Request RFQ hanya memiliki 1 file kalkulasi final resmi
@@ -95,6 +109,20 @@ CREATE TABLE rfq_final_quotations (
     FOREIGN KEY (rfq_id) REFERENCES rfq_requests(id) ON DELETE CASCADE
 );
 
+-- asalogistics.rfq_final_quotations definition
+
+CREATE TABLE `rfq_final_quotations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rfq_id` int(11) NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `rfq_id` (`rfq_id`),
+  CONSTRAINT `rfq_final_quotations_ibfk_1` FOREIGN KEY (`rfq_id`) REFERENCES `rfq_requests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE rfq_before_final (
     id INT AUTO_INCREMENT PRIMARY KEY,
     rfq_id INT NOT NULL,
@@ -103,6 +131,19 @@ CREATE TABLE rfq_before_final (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (rfq_id) REFERENCES rfq_requests(id) ON DELETE CASCADE
 );
+
+-- asalogistics.rfq_before_final definition
+
+CREATE TABLE `rfq_before_final` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rfq_id` int(11) NOT NULL,
+  `rfq_number` varchar(50) NOT NULL,
+  `file_path` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `rfq_id` (`rfq_id`),
+  CONSTRAINT `rfq_before_final_ibfk_1` FOREIGN KEY (`rfq_id`) REFERENCES `rfq_requests` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `rfq_final_merged` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -118,3 +159,17 @@ CREATE TABLE `rfq_final_merged` (
     ON DELETE CASCADE 
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- asalogistics.rfq_final_merged definition
+
+CREATE TABLE `rfq_final_merged` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rfq_id` int(11) NOT NULL,
+  `rfq_number` varchar(50) NOT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `fk_rfq_final_merged_rfq_id` (`rfq_id`),
+  CONSTRAINT `fk_rfq_final_merged_rfq_id` FOREIGN KEY (`rfq_id`) REFERENCES `rfq_requests` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
