@@ -39,42 +39,48 @@ function generateRfqPdf(data, outputPath) {
         // header
 
         // Gambar akan otomatis mengecil agar muat di dalam kotak 100x100 poin
-        doc.image('./utils/logo-asa-black.png', 90, 55, { fit: [103, 60], align: 'center', valign: 'center' });
+        // doc.image('./utils/logo-asa-black.png', 90, 55, { fit: [103, 60], align: 'center', valign: 'center' });
 
         doc
         .font("Times-Bold")
         .fontSize(16)
-        .text("PT ARDANA SEJAHTERA ABADI",  200, doc.y, {
+        .text("DATA PERMINTAAN SURAT PENAWARAN HARGA", 50 , doc.y, {
             align: "center"
         });
+        // doc
+        // .font("Times-Bold")
+        // .fontSize(16)
+        // .text("PT ARDANA SEJAHTERA ABADI",  200, doc.y, { ===> 200 adalah angka posisi sumbu x
+        //     align: "center"
+        // });
 
-        doc
-        .font("Times-Bold")
-        .fontSize(11)
-        .text("EMKL - INTERNATIONAL FREIGHT FORWARDER", 200, doc.y, {
-            align: "center"
-        });
+        // doc
+        // .font("Times-Bold")
+        // .fontSize(11)
+        // .text("EMKL - INTERNATIONAL FREIGHT FORWARDER", 50, doc.y, {
+        //     align: "center"
+        // });
 
-        doc
-        .font("Times")
-        .fontSize(10)
-        .text("Semarang Indah Blok E2 No.65", 200, doc.y, {
-            align: "center"
-        });
+        // doc
+        // .font("Times")
+        // .fontSize(10)
+        // .text("Semarang Indah Blok E2 No.65", 50, doc.y, {
+        //     align: "center"
+        // });
 
-        doc
-        .font("Times")
-        .fontSize(10)
-        .text("Semarang Barat, Kota Semarang", 200, doc.y, {
-            align: "center"
-        });
+        // doc
+        // .font("Times")
+        // .fontSize(10)
+        // .text("Semarang Barat, Kota Semarang", 50, doc.y, {
+        //     align: "center"
+        // });
 
-        doc
-        .font("Times")
-        .fontSize(10)
-        .text("Telp.(024) 76438979 Email: asalogistic.office@gmail.com", 200, doc.y, {
-            align: "center"
-        });
+        // doc
+        // .font("Times")
+        // .fontSize(10)
+        // .text("Telp.(024) 76438979 Email: asalogistic.office@gmail.com", 50, doc.y, {
+        //     align: "center"
+        // });
 
         doc.moveDown();
 
@@ -85,6 +91,9 @@ function generateRfqPdf(data, outputPath) {
         .stroke();
 
         doc.moveDown();
+
+        doc
+        .fontSize(11)
 
         const tanggal = new Intl.DateTimeFormat("id-ID", {
           day: "numeric",
