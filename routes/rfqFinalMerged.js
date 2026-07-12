@@ -4,6 +4,8 @@ const router = express.Router();
 const path = require("path");
 const fs = require("fs");
 const db = require("../config/db");
+require("dotenv").config();
+const appUrl = process.env.APP_URL || "http://localhost:3000";
 
 /**
  * @route   GET /api/rfq-final/view/:rfq_number
@@ -37,7 +39,7 @@ router.get("/view/:rfq_number", async (req, res) => {
     // Set header agar browser membuka file secara INLINE (menampilkan/melihat detail)
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
-    res.setHeader("Content-Security-Policy", "default-src 'none'; connect-src 'self' http://localhost:3000;");
+    res.setHeader("Content-Security-Policy", "default-src 'none'; connect-src 'self' ${appUrl};");
 
     // Kirim file ke client
     return res.sendFile(localFilePath);

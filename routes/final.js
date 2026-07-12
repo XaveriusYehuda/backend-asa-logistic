@@ -4,6 +4,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const db = require("../config/db"); // Menyesuaikan dengan konfigurasi database Anda
+require("dotenv").config();
+const appUrl = process.env.APP_URL || "http://localhost:3000";
 
 // Pastikan folder 'finalRFQ' ada, jika tidak, buat baru
 const dir = "./finalRFQ";
