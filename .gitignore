@@ -14,10 +14,10 @@ dist
 dist-ssr
 *.local
 assets/
-uploads/
-RFQFinalMergedPDF/
-RFQBeforeFinalPDF/
-finalRFQ/
+# uploads/
+# RFQFinalMergedPDF/
+# RFQBeforeFinalPDF/
+# finalRFQ/
 
 # Editor directories and files
 .vscode/*
