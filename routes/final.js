@@ -117,6 +117,12 @@ router.get("/download/:rfq_number", async (req, res) => {
     const fileData = rows[0];
     const absolutePath = path.resolve(fileData.file_path);
 
+    console.log(fileData.file_path);
+
+    console.log(absolutePath);
+
+    console.log(fs.existsSync(absolutePath));
+
     return res.download(absolutePath, fileData.file_name);
   } catch (error) {
     return res.status(500).json({ error: error.message });
