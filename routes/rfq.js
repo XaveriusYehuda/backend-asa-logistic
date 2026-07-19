@@ -6,9 +6,10 @@ const path = require("path");
 const fs = require("fs");
 const db = require("../config/db");
 const generateEmailNumber = require("../utils/generateEmailNumber");
-const PizZip = require("pizzip");
-const Docxtemplater = require("docxtemplater");
 const generateRfqPdf = require("../utils/generateRfqPdf");
+const generateRfqImportClearancePdf = require("../utils/generateRfqImportClearancePdf");
+const generateRfqInternationalFFPdf = require("../utils/generateRfqInternationalFFPdf");
+const generateRfqDomesticDeliveryPdf = require("../utils/generateRfqDomesticDeliveryPdf");
 const { PDFDocument } = require('pdf-lib');
 
 const storage = multer.diskStorage({
@@ -129,91 +130,152 @@ router.post("/submit", upload.any(), async (req, res) => {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    const templatePath = path.join(__dirname, "../templates/export_handling_templates.docx");
-    const content = fs.readFileSync(templatePath, "binary");
-    
-    const zip = new PizZip(content);
-    const doc = new Docxtemplater(zip, {
-      paragraphLoop: true,
-      linebreaks: true,
-    });
-
-    doc.render({
-      rfq_number: rfqNumber,
-      service_type: service_type,
-      created_at: new Date().toLocaleDateString("id-ID"),
-
-      company_name: detailsObj.company_name || "-",
-      company_address : detailsObj.company_address  || "-",
-      pic_name: detailsObj.pic_name || "-",
-      pic_email: detailsObj.pic_email || "-",
-      pic_number: detailsObj.pic_number || "-",
-      hs_code: detailsObj.hs_code || "-",
-      notes: detailsObj.notes || "-"
-    });
-
-    const buf = doc.getZip().generate({
-      type: "nodebuffer",
-      compression: "DEFLATE",
-    });
-
     const safeRfqNumber = rfqNumber.replace(/\//g, "-");
 
     const uniqueFileName = `RFQ-${safeRfqNumber}-${Date.now()}.pdf`;  
     const pdfPath = path.join(outputDir, uniqueFileName);
 
-    await generateRfqPdf({
+    if (stringServiceType === 'Export_Handling') {
+      await generateRfqPdf({
 
-      rfq_number: rfqNumber,
+        rfq_number: rfqNumber,
 
-      service_type : safeServiceType,
+        service_type : safeServiceType,
 
-      company_name: detailsObj.company_name,
+        company_name: detailsObj.company_name,
 
-      company_address: detailsObj.company_address,
+        company_address: detailsObj.company_address,
 
-      pic_name: detailsObj.pic_name,
+        pic_name: detailsObj.pic_name,
 
-      pic_email: detailsObj.pic_email,
+        pic_email: detailsObj.pic_email,
 
-      pic_number: detailsObj.pic_number,
+        pic_number: detailsObj.pic_number,
 
-      hs_code: detailsObj.hs_code,
+        hs_code: detailsObj.hs_code,
 
-      notes: detailsObj.notes
+        notes: detailsObj.notes
 
-    }, pdfPath);
+      }, pdfPath);
+    } else if (stringServiceType === 'Import_Clearance') {
+      await generateRfqImportClearancePdf({
 
+        rfq_number: rfqNumber,
 
-    const temporaryDocxPath = path.join(outputDir, `${uniqueFileName}.docx`);
-    const finalPdfPath = path.join(outputDir, `${uniqueFileName}.pdf`);
+        service_type : safeServiceType,
 
-    fs.writeFileSync(temporaryDocxPath, buf);
+        company_name: detailsObj.company_name,
 
-    // try {
-    //   // GANTI PROSES KONVERSI LOKAL DENGAN API CONVERTER
-    //   const formData = new FormData();
-    //   formData.append('file', fs.createReadStream(temporaryDocxPath));
+        company_address: detailsObj.company_address,
 
-    //   // Menggunakan API publik gratis untuk konversi dokumen (Contoh: standard-convert API)
-    //   const response = await axios.post('https://v2.convertapi.com/convert/docx/to/pdf?Secret=YOUR_FREE_SECRET_OR_USE_OTHER_FREE_API', formData, {
-    //     headers: {
-    //       ...formData.getHeaders(),
-    //     },
-    //     responseType: 'arraybuffer' // kita minta hasilnya berupa file biner
-    //   });
+        pic_name: detailsObj.pic_name,
 
-    //   // Tulis hasilnya langsung ke finalPdfPath
-    //   fs.writeFileSync(finalPdfPath, response.data);
+        pic_email: detailsObj.pic_email,
 
-    // } catch (convError) {
-    //   console.error("Detail Error API:", convError.message);
-    //   throw new Error("Gagal mengonversi Word ke PDF melalui Cloud API: " + convError.message);
-    // }
+        pic_number: detailsObj.pic_number,
 
-    // if (fs.existsSync(temporaryDocxPath)) {
-    //   fs.unlinkSync(temporaryDocxPath);
-    // }
+        hs_code: detailsObj.hs_code,
+
+        notes: detailsObj.notes
+
+      }, pdfPath);
+    } else if (stringServiceType === 'International_FF') {
+      await generateRfqInternationalFFPdf({
+
+        rfq_number: rfqNumber,
+
+        service_type : safeServiceType,
+
+        company_name: detailsObj.company_name,
+
+        company_address: detailsObj.company_address,
+
+        pic_name: detailsObj.pic_name,
+
+        pic_email: detailsObj.pic_email,
+
+        pic_number: detailsObj.pic_number,
+
+        notes: detailsObj.notes
+
+      }, pdfPath);
+    } else if (stringServiceType === 'Domestic_Delivery') {
+      await generateRfqDomesticDeliveryPdf({
+
+        rfq_number: rfqNumber,
+
+        service_type : safeServiceType,
+
+        company_name: detailsObj.company_name,
+
+        company_address: detailsObj.company_address,
+
+        pic_name: detailsObj.pic_name,
+
+        pic_email: detailsObj.pic_email,
+
+        pic_number: detailsObj.pic_number,
+
+        shipping_address: detailsObj.shipping_address,
+
+        destination_address: detailsObj.destination_address,
+
+        goods_gross_weight: detailsObj.goods_gross_weight,
+
+        goods_volume: detailsObj.goods_volume,
+
+        fleet_type: detailsObj.fleet_type,
+
+        notes: detailsObj.notes
+
+      }, pdfPath);
+    } else if (stringServiceType === 'Undername_Export') {
+      await generateRfqPdf({
+
+        rfq_number: rfqNumber,
+
+        service_type : safeServiceType,
+
+        company_name: detailsObj.company_name,
+
+        company_address: detailsObj.company_address,
+
+        pic_name: detailsObj.pic_name,
+
+        pic_email: detailsObj.pic_email,
+
+        pic_number: detailsObj.pic_number,
+
+        hs_code: detailsObj.hs_code,
+
+        notes: detailsObj.notes
+
+      }, pdfPath);
+    } else if (stringServiceType === 'Undername_Import') {
+      await generateRfqImportClearancePdf({
+
+        rfq_number: rfqNumber,
+
+        service_type : safeServiceType,
+
+        company_name: detailsObj.company_name,
+
+        company_address: detailsObj.company_address,
+
+        pic_name: detailsObj.pic_name,
+
+        pic_email: detailsObj.pic_email,
+
+        pic_number: detailsObj.pic_number,
+
+        hs_code: detailsObj.hs_code,
+
+        notes: detailsObj.notes
+
+      }, pdfPath);
+    };
+
+    // const finalPdfPath = path.join(outputDir, `${uniqueFileName}.pdf`);
 
     const pdfUrl = `${req.protocol}://${req.get("host")}/RFQBeforeFinalPDF/${uniqueFileName}.pdf`;
 
@@ -230,6 +292,13 @@ router.post("/submit", upload.any(), async (req, res) => {
 
     const mergedFileName = `RFQ-MERGED-${safeRfqNumber}-${Date.now()}.pdf`;
     const mergedPdfPath = path.join(mergedOutputDir, mergedFileName);
+
+    if (!fs.existsSync(pdfPath)) {
+      return res.status(400).json({
+        success: false,
+        error: `Gagal memproses permintaan. File PDF Utama tidak ditemukan di sistem. Pastikan service_type '${stringServiceType}' sudah sesuai.`
+      });
+    }
 
     // Load PDF Utama yang baru saja dibuat
     const mainPdfBuffer = fs.readFileSync(pdfPath);
